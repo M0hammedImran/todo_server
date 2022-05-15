@@ -2,30 +2,24 @@ package main
 
 import (
 	"log"
+	"todo_server/handlers"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
-
-type Todo struct {
-	Completed bool
-	Id        int
-	Text      string
-}
-
-var todos = make([]Todo, 0)
 
 func main() {
 	app := fiber.New()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		todo := append(todos, Todo{false, 1, "hello"})
-		copy(todos[1:], todos[1+1:])
+	app.Use(cors.New(cors.ConfigDefault))
+	app.Use(logger.New(logger.Config{
+		Format: "${status} - ${method} ${path}\n",
+	}))
 
-		// a[len(a)-1] = nil // or the zero value of T
-		// a = a[:len(a)-1]
-
-		return c.JSON(todo)
-	})
+	app.Get("/", handlers.GetTodos)
+	app.Get("/:id", handlers.GetTodo)
+	app.Post("/", handlers.AddTodo)
 
 	log.Fatal(app.Listen(":4000"))
 }
