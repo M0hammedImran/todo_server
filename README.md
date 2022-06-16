@@ -1,2 +1,3 @@
 # Todo Server
-Basic todo server implementation in go.
+
+Basic todo server implementation in go with postgresDB.
